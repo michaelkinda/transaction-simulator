@@ -1,0 +1,254 @@
+<div class="container">
+  <h1>Transaction Simulator</h1>
+  
+  <!-- Flash Messages -->
+  <% if notice %>
+    <div class="alert alert-success"><%= notice %></div>
+  <% end %>
+  
+  <% if alert %>
+    <div class="alert alert-danger"><%= alert %></div>
+  <% end %>
+  
+  <!-- Transaction Form -->
+  <div class="transaction-form">
+    <h2>Create New Transaction</h2>
+    
+    <%= form_with url: transactions_path, method: :post, local: true, class: "transaction-form-content" do |form| %>
+      <div class="form-group">
+        <%= form.label :from_account_id, "From Account" %>
+        <%= form.select :from_account_id, 
+            options_from_collection_for_select(@accounts, :id, :display_name_with_balance), 
+            { prompt: "Select from account" }, 
+            { class: "form-control", required: true } %>
+      </div>
+      
+      <div class="form-group">
+        <%= form.label :to_account_id, "To Account" %>
+        <%= form.select :to_account_id, 
+            options_from_collection_for_select(@accounts, :id, :display_name_with_balance), 
+            { prompt: "Select to account" }, 
+            { class: "form-control", required: true } %>
+      </div>
+      
+      <div class="form-group">
+        <%= form.label :amount, "Amount" %>
+        <%= form.number_field :amount, 
+            step: 0.01, 
+            min: 0.01, 
+            placeholder: "0.00", 
+            class: "form-control", 
+            required: true %>
+      </div>
+      
+      <div class="form-actions">
+        <%= form.submit "Transfer Money", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- Recent Transactions -->
+  <div class="recent-transactions">
+    <h2>Recent Transactions</h2>
+    
+    <% if @transactions.any? %>
+      <div class="transactions-table">
+        <table>
+          <thead>
+            <tr>
+              <th>From</th>
+              <th>To</th>
+              <th>Amount</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @transactions.each do |transaction| %>
+              <tr>
+                <td><%= transaction.from_account.user.name %></td>
+                <td><%= transaction.to_account.user.name %></td>
+                <td class="amount">$<%= number_with_precision(transaction.amount, precision: 2) %></td>
+                <td class="date"><%= transaction.created_at.strftime("%m/%d/%Y %I:%M %p") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="no-transactions">No transactions yet. Create your first transaction above!</p>
+    <% end %>
+  </div>
+</div>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+  }
+  
+  h2 {
+    color: #34495e;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+  
+  .transaction-form {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .transaction-form-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: end;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #2c3e50;
+  }
+  
+  .form-control {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+  
+  .form-actions {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .btn {
+    background: #3498db;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn:hover {
+    background: #2980b9;
+  }
+  
+  .btn-primary {
+    background: #27ae60;
+  }
+  
+  .btn-primary:hover {
+    background: #229954;
+  }
+  
+  .recent-transactions {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .transactions-table {
+    overflow-x: auto;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  
+  tr:hover {
+    background: #f8f9fa;
+  }
+  
+  .amount {
+    font-weight: 600;
+    color: #27ae60;
+  }
+  
+  .date {
+    color: #7f8c8d;
+    font-size: 0.9em;
+  }
+  
+  .no-transactions {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 40px;
+  }
+  
+  .alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  
+  .alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  @media (max-width: 768px) {
+    .transaction-form-content {
+      grid-template-columns: 1fr;
+    }
+    
+    .container {
+      padding: 10px;
+    }
+  }
+</style>
