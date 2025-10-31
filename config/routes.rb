@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   root "transactions#index"
-  resources :transactions, only: [:index, :create]
+  resources :transactions, only: [ :index, :create ]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

@@ -1,0 +1,21 @@
+{
+    // Enable auto-formatting on save
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+    // Ruby LSP settings
+    "[ruby]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Shopify.ruby-lsp"
+    },
+    // Ruby LSP configuration
+    "rubyLsp.enabledFeatures": {
+        "formatting": true,
+        "diagnostics": true
+    },
+    "rubyLsp.bundleGemfile": "./Gemfile",
+    "rubyLsp.rubyVersionManager": {
+        "identifier": "auto"
+    },
+}
